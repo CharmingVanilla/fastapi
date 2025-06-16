@@ -6,6 +6,18 @@ from psycopg2.extras import RealDictCursor
 import time
 from .config import setting
 
+import os
+
+# 如果 Heroku 提供了 DATABASE_URL（这是部署时的标准），就用它
+if os.getenv("DATABASE_URL"):
+    SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL").replace("postgres://", "postgresql://", 1)
+else:
+    # 本地开发时的方式：从 setting 中读取各个参数拼接
+    SQLALCHEMY_DATABASE_URL = (
+        f"postgresql://{setting.database_username}:{setting.database_password}"
+        f"@{setting.database_hostname}:{setting.database_port}/{setting.database_name}"
+    )
+
 SQLALCHEMY_DATABASE_URL=f'postgresql://{setting.database_username}:{setting.database_password}@{setting.database_hostname}:{setting.database_port}/{setting.database_name}'
 engine=create_engine(SQLALCHEMY_DATABASE_URL)
 SessionLocal=sessionmaker(autocommit=False,autoflush=False,bind=engine)
