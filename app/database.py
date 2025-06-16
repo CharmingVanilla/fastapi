@@ -18,6 +18,8 @@ else:
         f"@{setting.database_hostname}:{setting.database_port}/{setting.database_name}"
     )
 
+print("🔍 Using DB URL:", SQLALCHEMY_DATABASE_URL)
+
 #SQLALCHEMY_DATABASE_URL=f'postgresql://{setting.database_username}:{setting.database_password}@{setting.database_hostname}:{setting.database_port}/{setting.database_name}'
 engine=create_engine(SQLALCHEMY_DATABASE_URL)
 SessionLocal=sessionmaker(autocommit=False,autoflush=False,bind=engine)
