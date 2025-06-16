@@ -36,18 +36,18 @@ def get_db():
         db.close()
 
 
-#用sql方法连接到数据库
-while True:
-    try:
-        conn=psycopg2.connect(host='localhost',database='fastapi',
-                            user='postgres',password='lhy20011230',
-                            cursor_factory=RealDictCursor)
+# #用sql方法连接到数据库
+# while True:
+#     try:
+#         conn=psycopg2.connect(host='localhost',database='fastapi',
+#                             user='postgres',password='lhy20011230',
+#                             cursor_factory=RealDictCursor)
         
-        cursor=conn.cursor()
-        # cursor.execute("SET client_encoding TO 'UTF8'")
-        print("the database connection is successful!!")
-        break
-    except Exception as error:
-        print("connecting to database is failed!")
-        print("Error:",repr(error))
-        time.sleep(2)
+#         cursor=conn.cursor()
+#         # cursor.execute("SET client_encoding TO 'UTF8'")
+#         print("the database connection is successful!!")
+#         break
+#     except Exception as error:
+#         print("connecting to database is failed!")
+#         print("Error:",repr(error))
+#         time.sleep(2)
