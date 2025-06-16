@@ -1,4 +1,5 @@
 from pydantic_settings import BaseSettings
+import os
 
 class Settings(BaseSettings):
     database_hostname:str
@@ -11,6 +12,7 @@ class Settings(BaseSettings):
     access_token_expire_minutes:int
 
     class Config():
-        env_file='.env'
+# ⚠️ 仅在本地加载 .env 文件
+        env_file = ".env" if os.getenv("HEROKU_APP_NAME") is None else None
 
 setting=Settings()
