@@ -5,7 +5,6 @@ Revises: 771a776b919e
 Create Date: 2025-06-13 16:09:07.708870
 
 """
-from tkinter import CASCADE
 from typing import Sequence, Union
 
 from alembic import op
