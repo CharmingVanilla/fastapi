@@ -5,6 +5,7 @@ from pydantic import BaseModel, EmailStr
 from pydantic.types import conint
 from datetime import datetime
 from typing import Optional
+from typing import List
 
 from sqlalchemy import Integer
 
@@ -39,10 +40,19 @@ class PostResponse(PostBase): #传回指令的request model 不返回id和create
     class Config: ##告诉pydantic model去读取数据即使他不是一个dict
         orm_mode = True
 
+class CommentOut(BaseModel):
+    comment_id: int
+    content: str
+    writer_id: int
+    created_at: datetime
+
+    class Config:
+        orm_mode = True
 
 class PostOut(BaseModel): #不从postBase继承 而是从basemodel继承
     Post: PostResponse # 你原来的 Post Pydantic Model
-    votes: int
+    votes: int  
+    comments:List[CommentOut]
 
     class Config:
         orm_mode = True
@@ -70,3 +80,10 @@ class TokenData(BaseModel):
 class Vote(BaseModel):
     post_id:int
     post_dir:int
+
+class Comment(BaseModel):
+    post_id:int
+    content:str
+    # owner_id:int 这个好像可以查出来
+    # writer_id:int
+

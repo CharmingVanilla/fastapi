@@ -9,22 +9,56 @@ router=APIRouter(
     prefix="/posts",
     tags=['Posts']
 )
+@router.get("/", response_model=List[schemas.PostOut])
+def get_posts(
+    db: Session = Depends(get_db),
+    current_user: int = Depends(oauth2.get_current_user),
+    limit: int = 10,
+    skip: int = 0,
+    search: Optional[str] = ""
+):
+    # 查询 Post + 投票数
+    posts_with_votes = db.query(
+        models.Post,
+        func.count(models.Vote.post_id).label("votes")
+    ).join(
+        models.Vote, models.Post.id == models.Vote.post_id, isouter=True
+    ).group_by(
+        models.Post.id
+    ).filter(
+        models.Post.content.contains(search)
+    ).limit(limit).offset(skip).all()
 
-@router.get("/",response_model=List[schemas.PostOut])
-def get_posts(db:Session=Depends(get_db),current_user:int=Depends(oauth2.get_current_user),
-              limit:int=10,skip:int=0,search:Optional[str]=""):  
-    #db:Session=Depends(get_db) give access to our database
-    # cursor.execute("""SELECT * FROM post""") 
-    # #this is SQL language and we use it to communicate with pgAdmin
-    # posts=cursor.fetchall()
-    #找出符合要求的post
-    posts=db.query(models.Post).filter(models.Post.content.contains(search)).limit(limit).offset(skip).all()
-    #将vote中的like数也join到一起
-    posts_likes=db.query(models.Post,func.count(models.Vote.post_id).label("votes")).join(
-        models.Vote,models.Post.id==models.Vote.post_id,isouter=True).group_by(models.Post.id).filter(
-            models.Post.content.contains(search)).limit(limit).offset(skip).all()
+    # 拼接评论
+    results = []
+    for post, vote_count in posts_with_votes:
+        comments = db.query(models.Comment).filter(models.Comment.post_id == post.id).all()
 
-    return posts_likes
+        results.append({
+            "Post": post,
+            "votes": vote_count,
+            "comments": comments  # 👈 评论加进来
+        })
+
+    return results
+
+# @router.get("/",response_model=List[schemas.PostOut])
+# def get_posts(db:Session=Depends(get_db),current_user:int=Depends(oauth2.get_current_user),
+#               limit:int=10,skip:int=0,search:Optional[str]=""):  
+#     #db:Session=Depends(get_db) give access to our database
+#     # cursor.execute("""SELECT * FROM post""") 
+#     # #this is SQL language and we use it to communicate with pgAdmin
+#     # posts=cursor.fetchall()
+#     #找出符合要求的post
+#     #posts=db.query(models.Post).filter(models.Post.content.contains(search)).limit(limit).offset(skip).all()
+#     #将vote中的like数也join到一起
+#     posts_likes=db.query(models.Post,func.count(models.Vote.post_id).label("votes")).join(
+#         models.Vote,models.Post.id==models.Vote.post_id,isouter=True).group_by(models.Post.id)
+    
+#     posts_add_comment=
+#     final_post=posts_add_comment.filter(
+#             models.Post.content.contains(search)).limit(limit).offset(skip).all()
+#     return final_post
 
 # @app.post('/createposts')
 # def create_posts(payload:dict=Body(...)):
