@@ -1,10 +1,10 @@
 
 from fastapi import FastAPI
 
-from app.routers import favourite
+from app.routers import favourite, myprofile
 from . import models
 from .database import engine
-from .routers import post,user,auth,vote,comment,favourite
+from .routers import post,user,auth,vote,comment,favourite,myprofile
 from .config import setting
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -46,6 +46,7 @@ app.include_router(auth.router)
 app.include_router(vote.router)
 app.include_router(comment.router)
 app.include_router(favourite.router)
+app.include_router(myprofile.router)
 
 @app.get("/")
 async def root():
