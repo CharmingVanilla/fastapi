@@ -62,7 +62,8 @@ class PostOut(BaseModel): #不从postBase继承 而是从basemodel继承
 class UserCreate(BaseModel):
     email:EmailStr
     password:str
-    pass
+    is_admin:bool=False
+
 
 
 

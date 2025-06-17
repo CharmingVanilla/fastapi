@@ -45,7 +45,7 @@ def delete_comment(comment:schemas.Comment,db:Session=Depends(get_db),
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail=f"we cant found this comment!!")
     
-    if to_be_delete.writer_id==current_user.id: #如果这条评论是本人发送的
+    if to_be_delete.writer_id==current_user.id or current_user.is_admin: #如果这条评论是本人发送的
         if to_be_delete:
                 comment_query.delete(synchronize_session=False)
                 db.commit()

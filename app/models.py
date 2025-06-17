@@ -24,7 +24,8 @@ class User(Base):
     password=Column(String,nullable=False)   
     created_at=Column(TIMESTAMP(timezone=True),nullable=False,
                       server_default=text('now()'))
-    
+    is_admin=Column(Boolean,nullable=False, server_default=text('false'))
+
 class Vote(Base):
     __tablename__="votes"
     post_id=Column(Integer,ForeignKey("posts.id",ondelete="CASCADE"),nullable=False,primary_key=True)
